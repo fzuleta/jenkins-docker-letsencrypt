@@ -1,0 +1,54 @@
+version: "3.4"
+
+services:
+  nginx:
+    container_name: nginx
+    image: fz/nginx:latest 
+    build:
+      args:
+        - DOMAIN=domain.com
+        - NPM_PORT=8080
+      context: ./docker/nginx
+      dockerfile: ./nginx.dockerfile
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - ./certs:/etc/letsencrypt
+      - ./certs-data:/data/letsencrypt
+    networks:
+      - jenkins-registry-network
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "1000k"
+        max-file: "3"
+
+  jenkins:
+    container_name: jenkins
+    image: fz/jenkins
+    build:
+      context: .
+      dockerfile: ./jenkins/jenkins.dockerfile
+    ports:
+      - "8080:8080"
+    volumes:
+     - ~/jenkins/jenkins/jenkins_home:/var/jenkins_home
+     - /var/run/docker.sock:/var/run/docker.sock
+     - ~/jenkins/jenkins/projects:/projects
+    networks:
+      - jenkins-registry-network
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "1000k"
+        max-file: "3"
+
+volumes:
+  jenkins:
+    driver: local
+
+networks:
+  jenkins-registry-network:
+    driver: bridge
+
