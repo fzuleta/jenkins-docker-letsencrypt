@@ -3,10 +3,14 @@
 Make sure you have a domain(or subdomain) and SSH access to an instance. This works well under a DigitalOcean's Ubuntu with Docker and Docker Compose installed.
 
 ## Steps
-0. `mkdir jenkins && mkdir jenkins/jenkins_home && chmod -R 777 jenkins/jenkins_home`
+0. Run as `root`
+0. `chmod -R 777 jenkins/jenkins_home`
 1. `sudo chmod -R 777 /var/run/docker.sock` it isnt ideal, but only thing that works
 2. Set in `docker-compose.yml` and `ssl_gen.sh` the **DOMAIN=domain.com** .
 3. Delete all **DELETE_ME.yml** files in `certs`, `certs-data`, `jenkins/jenkins_home`, `jenkins/projects` (keep folders).
+    - ```
+    rm certs/DELETE_ME.yml && rm certs-data/DELETE_ME.yml && rm jenkins/jenkins_home/DELETE_ME.yml && rm jenkins/projects/DELETE_ME.yml
+    ```
 4. `docker-compose up -d`
 5. `chmod +x *.sh && ./ssl_gen.sh`  
 6. After it succeeds, start it with `docker-compose restart`
